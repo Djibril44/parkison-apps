@@ -1,19 +1,14 @@
 services:
   - type: web
     name: parkinson-app
-    env: python
-    plan: free
+    runtime: python
+    runtimeVersion: 3.11
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn app:app"
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11
       - key: FLASK_ENV
         value: production
       - key: SECRET_KEY
-        generateValue: true
-    envVarGroups:
-      - name: database
-        envVars:
-          - key: DATABASE_URL
-            sync: false
+        value: a52946ffee9d597cf2ef4afd3ec59e1465f83db61b9c7f4dc7686a4f627daa8b
+      - key: DATABASE_URL
+        sync: false
