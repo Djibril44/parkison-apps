@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des Utilisateurs{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+    <!-- HEADER -->
+    <div style="margin-bottom: 2.5rem;">
+        <h1 style="color: var(--dark); font-size: 2rem; margin: 0 0 0.5rem; font-weight: 700;">
+            <i class="fas fa-users-cog" style="color: var(--primary); margin-right: 0.8rem;"></i>
+            Gestion des Utilisateurs
+        </h1>
+        <p style="color: var(--gray-dark); margin: 0;">Créez et gérez les accès des médecins et personnel</p>
+    </div>
+
+    <!-- FORM: Créer nouvel utilisateur -->
+    <div class="card fade-in-up" style="margin-bottom: 2.5rem; animation-delay: 0.1s;">
+        <h3 style="color: var(--dark); font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem;">
+            <i class="fas fa-user-plus" style="color: var(--primary);"></i>
+            Créer un nouvel utilisateur
+        </h3>
+
+        <form onsubmit="createUser(event)" style="display: grid; gap: 1.5rem;">
+            <!-- Nom -->
+            <div>
+                <label style="display: block; font-weight: 600; color: var(--dark); margin-bottom: 0.5rem;">
+                    <i class="fas fa-user" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                    Nom complet
+                </label>
+                <input type="text" id="nom" required placeholder="Dr. Jean Dupont" style="
+                    width: 100%;
+                    padding: 0.8rem;
+                    border: 2px solid var(--gray);
+                    border-radius: var(--radius-sm);
+                    font-size: 0.95rem;
+                    transition: var(--transition);
+                " onfocus="this.style.borderColor = 'var(--primary)'" onfocus="this.style.borderColor = 'var(--gray)'">
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label style="display: block; font-weight: 600; color: var(--dark); margin-bottom: 0.5rem;">
+                    <i class="fas fa-envelope" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                    Email
+                </label>
+                <input type="email" id="email" required placeholder="jean.dupont@hospital.com" style="
+                    width: 100%;
+                    padding: 0.8rem;
+                    border: 2px solid var(--gray);
+                    border-radius: var(--radius-sm);
+                    font-size: 0.95rem;
+                    transition: var(--transition);
+                ">
+            </div>
+
+            <!-- Mot de passe -->
+            <div>
+                <label style="display: block; font-weight: 600; color: var(--dark); margin-bottom: 0.5rem;">
+                    <i class="fas fa-lock" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                    Mot de passe
+                </label>
+                <input type="password" id="password" required placeholder="••••••••" style="
+                    width: 100%;
+                    padding: 0.8rem;
+                    border: 2px solid var(--gray);
+                    border-radius: var(--radius-sm);
+                    font-size: 0.95rem;
+                    transition: var(--transition);
+                ">
+            </div>
+
+            <!-- Rôle -->
+            <div>
+                <label style="display: block; font-weight: 600; color: var(--dark); margin-bottom: 0.5rem;">
+                    <i class="fas fa-shield-alt" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                    Rôle
+                </label>
+                <select id="role" style="
+                    width: 100%;
+                    padding: 0.8rem;
+                    border: 2px solid var(--gray);
+                    border-radius: var(--radius-sm);
+                    font-size: 0.95rem;
+                    background: white;
+                    cursor: pointer;
+                    transition: var(--transition);
+                ">
+                    <option value="médecin">Médecin</option>
+                    <option value="infirmier">Infirmier</option>
+                    <option value="technicien">Technicien</option>
+                </select>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn btn-primary" style="
+                width: 100%;
+                padding: 1rem;
+                font-size: 1rem;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+                margin-top: 1rem;
+            ">
+                <i class="fas fa-plus"></i>
+                Créer l'utilisateur
+            </button>
+        </form>
+
+        <div id="form-message" style="margin-top: 1rem; padding: 1rem; border-radius: var(--radius-sm); display: none;"></div>
+    </div>
+
+    <!-- TABLE: Liste des utilisateurs -->
+    <div class="card fade-in-up" style="animation-delay: 0.2s;">
+        <h3 style="color: var(--dark); font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem;">
+            <i class="fas fa-list" style="color: var(--primary);"></i>
+            Utilisateurs existants
+        </h3>
+
+        <div class="table-responsive">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="background: linear-gradient(135deg, #f8fafb, #f0f2f5);">
+                    <tr>
+                        <th style="padding: 1rem; text-align: left; font-weight: 700; border-bottom: 2px solid var(--gray);">Nom</th>
+                        <th style="padding: 1rem; text-align: left; font-weight: 700; border-bottom: 2px solid var(--gray);">Email</th>
+                        <th style="padding: 1rem; text-align: center; font-weight: 700; border-bottom: 2px solid var(--gray);">Rôle</th>
+                        <th style="padding: 1rem; text-align: center; font-weight: 700; border-bottom: 2px solid var(--gray);">Date création</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table-body">
+                    {% for user in users %}
+                    <tr style="border-bottom: 1px solid var(--gray); {% if loop.index % 2 == 0 %}background: var(--light);{% endif %}">
+                        <td style="padding: 1rem; font-weight: 600;">{{ user.nom }}</td>
+                        <td style="padding: 1rem;">{{ user.email }}</td>
+                        <td style="padding: 1rem; text-align: center;">
+                            <span style="
+                                background: {% if user.role == 'admin' %}linear-gradient(135deg, #ab47bc, #9c27b0){% elif user.role == 'médecin' %}linear-gradient(135deg, #29b6f6, #0288d1){% else %}linear-gradient(135deg, #66bb6a, #43a047){% endif %};
+                                color: white;
+                                padding: 0.4rem 0.8rem;
+                                border-radius: 20px;
+                                font-size: 0.85rem;
+                                font-weight: 600;
+                            ">
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        <td style="padding: 1rem; text-align: center; color: var(--gray-dark);">
+                            {{ user.date_creation.strftime('%d/%m/%Y') }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function createUser(event) {
+    event.preventDefault();
+    
+    const nom = document.getElementById('nom').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const role = document.getElementById('role').value;
+    
+    const messageDiv = document.getElementById('form-message');
+    
+    fetch('/admin/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ nom, email, password, role })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            messageDiv.style.background = 'rgba(102, 187, 106, 0.1)';
+            messageDiv.style.color = 'var(--primary)';
+            messageDiv.textContent = '✅ Utilisateur créé avec succès!';
+            messageDiv.style.display = 'block';
+            
+            document.querySelector('form').reset();
+            
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        } else {
+            messageDiv.style.background = 'rgba(239, 83, 80, 0.1)';
+            messageDiv.style.color = 'var(--danger)';
+            messageDiv.textContent = '❌ ' + data.message;
+            messageDiv.style.display = 'block';
+        }
+    })
+    .catch(error => {
+        messageDiv.style.background = 'rgba(239, 83, 80, 0.1)';
+        messageDiv.style.color = 'var(--danger)';
+        messageDiv.textContent = '❌ Erreur: ' + error;
+        messageDiv.style.display = 'block';
+    });
+}
+</script>
+{% endblock %}

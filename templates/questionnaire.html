@@ -1,0 +1,523 @@
+{% extends "base.html" %}
+
+{% block title %}Questionnaire {{ numero }}/3 - Parkinson Screening App{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- PROGRESS BAR -->
+    <div style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <h1 style="font-size: 2rem; margin: 0;">
+                <i class="fas fa-list-check" style="color: var(--primary); margin-right: 0.8rem;"></i>
+                Questionnaire {{ numero }} sur 3
+            </h1>
+            <div style="text-align: right;">
+                <span style="font-size: 0.9rem; color: var(--gray-dark);">Progression</span>
+                <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">{{ numero }}/3</div>
+            </div>
+        </div>
+        
+        <!-- PROGRESS BAR VISUAL -->
+        <div style="
+            background: var(--gray);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        ">
+            <div style="
+                background: linear-gradient(90deg, var(--primary), var(--primary-light));
+                height: 100%;
+                width: {{ (numero / 3) * 100 }}%;
+                transition: width 0.5s ease;
+                box-shadow: 0 0 10px rgba(102, 187, 106, 0.5);
+            "></div>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--gray-dark); margin: 0;">
+            Patient: <strong>{{ patient.nom }}</strong> (ID: {{ patient.numero_id }})
+        </p>
+    </div>
+
+    <form id="questionnaireForm" class="fade-in-up">
+        {% if numero == 1 %}
+        <!-- QUESTIONNAIRE 1: SYMPTÔMES MOTEURS -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2 style="
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: white;
+                padding: 2rem;
+                margin: -2rem -2rem 2rem -2rem;
+                border-radius: var(--radius) var(--radius) 0 0;
+                font-size: 1.4rem;
+            ">
+                <i class="fas fa-heart-pulse" style="margin-right: 0.8rem;"></i>
+                Symptômes moteurs
+            </h2>
+            <p style="color: var(--gray-dark); margin-bottom: 2rem; font-size: 0.95rem;">
+                Répondez sincèrement aux questions suivantes concernant vos symptômes moteurs.
+            </p>
+
+            <!-- QUESTION 1 -->
+            <div class="question-card" style="margin-bottom: 2rem;">
+                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                    <div style="
+                        width: 40px;
+                        height: 40px;
+                        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: 700;
+                        flex-shrink: 0;
+                    ">1</div>
+                    <div style="flex: 1;">
+                        <label style="
+                            font-size: 1.05rem;
+                            font-weight: 600;
+                            color: var(--dark);
+                            margin-bottom: 1rem;
+                            display: block;
+                        ">
+                            Avez-vous des tremblements au repos (tremblements des mains, doigts ou bras)?
+                        </label>
+                        <div class="radio-group" style="display: flex; gap: 2rem;">
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question1" value="Oui" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Oui</span>
+                            </label>
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question1" value="Non" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Non</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUESTION 2 -->
+            <div class="question-card" style="margin-bottom: 2rem;">
+                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                    <div style="
+                        width: 40px;
+                        height: 40px;
+                        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: 700;
+                        flex-shrink: 0;
+                    ">2</div>
+                    <div style="flex: 1;">
+                        <label style="
+                            font-size: 1.05rem;
+                            font-weight: 600;
+                            color: var(--dark);
+                            margin-bottom: 1rem;
+                            display: block;
+                        ">
+                            Avez-vous des ralentissements musculaires?
+                        </label>
+                        <div class="radio-group" style="display: flex; gap: 2rem;">
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question2" value="Oui" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Oui</span>
+                            </label>
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question2" value="Non" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Non</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUESTION 3 -->
+            <div class="question-card" style="margin-bottom: 2rem;">
+                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                    <div style="
+                        width: 40px;
+                        height: 40px;
+                        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: 700;
+                        flex-shrink: 0;
+                    ">3</div>
+                    <div style="flex: 1;">
+                        <label style="
+                            font-size: 1.05rem;
+                            font-weight: 600;
+                            color: var(--dark);
+                            margin-bottom: 1rem;
+                            display: block;
+                        ">
+                            Vos mouvements sont-ils plus lents qu'auparavant?
+                        </label>
+                        <div class="radio-group" style="display: flex; gap: 2rem;">
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question3" value="Oui" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Oui</span>
+                            </label>
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question3" value="Non" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Non</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUESTION 4 -->
+            <div class="question-card">
+                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                    <div style="
+                        width: 40px;
+                        height: 40px;
+                        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: 700;
+                        flex-shrink: 0;
+                    ">4</div>
+                    <div style="flex: 1;">
+                        <label style="
+                            font-size: 1.05rem;
+                            font-weight: 600;
+                            color: var(--dark);
+                            margin-bottom: 1rem;
+                            display: block;
+                        ">
+                            Avez-vous une rigidité musculaire ou une raideur?
+                        </label>
+                        <div class="radio-group" style="display: flex; gap: 2rem;">
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question4" value="Oui" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Oui</span>
+                            </label>
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question4" value="Non" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Non</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% elif numero == 2 %}
+        <!-- QUESTIONNAIRE 2: SYMPTÔMES ET FONCTIONNEMENT -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2 style="
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: white;
+                padding: 2rem;
+                margin: -2rem -2rem 2rem -2rem;
+                border-radius: var(--radius) var(--radius) 0 0;
+                font-size: 1.4rem;
+            ">
+                <i class="fas fa-running" style="margin-right: 0.8rem;"></i>
+                Symptômes et fonctionnement
+            </h2>
+            <p style="color: var(--gray-dark); margin-bottom: 2rem; font-size: 0.95rem;">
+                Décrivez comment ces symptômes affectent votre fonctionnement quotidien.
+            </p>
+
+            <!-- QUESTION 1 -->
+            <div class="question-card" style="margin-bottom: 2rem;">
+                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                    <div style="
+                        width: 40px;
+                        height: 40px;
+                        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: 700;
+                        flex-shrink: 0;
+                    ">1</div>
+                    <div style="flex: 1;">
+                        <label style="
+                            font-size: 1.05rem;
+                            font-weight: 600;
+                            color: var(--dark);
+                            margin-bottom: 1rem;
+                            display: block;
+                        ">
+                            Avez-vous des difficultés à marcher ou à vous déplacer?
+                        </label>
+                        <div class="radio-group" style="display: flex; gap: 2rem;">
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question1" value="Oui" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Oui</span>
+                            </label>
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question1" value="Non" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Non</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUESTION 2 -->
+            <div class="question-card" style="margin-bottom: 2rem;">
+                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                    <div style="
+                        width: 40px;
+                        height: 40px;
+                        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: 700;
+                        flex-shrink: 0;
+                    ">2</div>
+                    <div style="flex: 1;">
+                        <label style="
+                            font-size: 1.05rem;
+                            font-weight: 600;
+                            color: var(--dark);
+                            margin-bottom: 1rem;
+                            display: block;
+                        ">
+                            Avez-vous des difficultés à écrire ou à manipuler des objets?
+                        </label>
+                        <div class="radio-group" style="display: flex; gap: 2rem;">
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question2" value="Oui" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Oui</span>
+                            </label>
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question2" value="Non" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Non</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUESTION 3 -->
+            <div class="question-card" style="margin-bottom: 2rem;">
+                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                    <div style="
+                        width: 40px;
+                        height: 40px;
+                        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: 700;
+                        flex-shrink: 0;
+                    ">3</div>
+                    <div style="flex: 1;">
+                        <label style="
+                            font-size: 1.05rem;
+                            font-weight: 600;
+                            color: var(--dark);
+                            margin-bottom: 1rem;
+                            display: block;
+                        ">
+                            Avez-vous des pertes d'équilibre ou des chutes fréquentes?
+                        </label>
+                        <div class="radio-group" style="display: flex; gap: 2rem;">
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question3" value="Oui" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Oui</span>
+                            </label>
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question3" value="Non" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Non</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUESTION 4 -->
+            <div class="question-card" style="margin-bottom: 2rem;">
+                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                    <div style="
+                        width: 40px;
+                        height: 40px;
+                        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: 700;
+                        flex-shrink: 0;
+                    ">4</div>
+                    <div style="flex: 1;">
+                        <label style="
+                            font-size: 1.05rem;
+                            font-weight: 600;
+                            color: var(--dark);
+                            margin-bottom: 1rem;
+                            display: block;
+                        ">
+                            Avez-vous une voix plus faible qu'avant?
+                        </label>
+                        <div class="radio-group" style="display: flex; gap: 2rem;">
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question4" value="Oui" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Oui</span>
+                            </label>
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question4" value="Non" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Non</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUESTION 5 -->
+            <div class="question-card">
+                <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                    <div style="
+                        width: 40px;
+                        height: 40px;
+                        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-weight: 700;
+                        flex-shrink: 0;
+                    ">5</div>
+                    <div style="flex: 1;">
+                        <label style="
+                            font-size: 1.05rem;
+                            font-weight: 600;
+                            color: var(--dark);
+                            margin-bottom: 1rem;
+                            display: block;
+                        ">
+                            Avez-vous des troubles du sommeil?
+                        </label>
+                        <div class="radio-group" style="display: flex; gap: 2rem;">
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question5" value="Oui" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Oui</span>
+                            </label>
+                            <label class="radio-custom" style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+                                <input type="radio" name="question5" value="Non" required style="cursor: pointer;">
+                                <span style="font-weight: 500;">Non</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ACTIONS BOTTOM -->
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button type="button" class="btn btn-secondary" onclick="history.back()" style="flex: 1; justify-content: center; padding: 1rem;">
+                <i class="fas fa-arrow-left"></i>
+                Retour
+            </button>
+            <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center; padding: 1rem;">
+                <i class="fas fa-arrow-right"></i>
+                {% if numero == 1 %}Suivant{% else %}Voir les résultats{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+.question-card {
+    padding: 1.5rem;
+    background: var(--light);
+    border-radius: var(--radius-sm);
+    border-left: 4px solid var(--primary);
+    transition: var(--transition);
+}
+
+.question-card:hover {
+    background: #f5f7fa;
+    transform: translateX(4px);
+}
+
+.radio-custom input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--gray);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+    background: white;
+}
+
+.radio-custom input[type="radio"]:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 8px rgba(102, 187, 106, 0.3);
+}
+
+.radio-custom input[type="radio"]:checked {
+    background: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 12px rgba(102, 187, 106, 0.4);
+}
+</style>
+
+<script>
+document.getElementById('questionnaireForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const responses = {};
+    const formElements = this.elements;
+    
+    for (let i = 0; i < formElements.length; i++) {
+        if (formElements[i].type === 'radio' && formElements[i].checked) {
+            responses[formElements[i].name] = formElements[i].value;
+        }
+    }
+
+    try {
+        const response = await fetch('/save-questionnaire', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                patient_id: {{ patient.id }},
+                numero: {{ numero }},
+                responses: responses
+            })
+        });
+
+        if (response.ok) {
+            {% if numero == 1 %}
+            window.location.href = `/questionnaire/{{ patient.id }}/2`;
+            {% elif numero == 2 %}
+            window.location.href = `/resultat/{{ patient.id }}`;
+            {% endif %}
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue');
+    }
+});
+</script>
+{% endblock %}

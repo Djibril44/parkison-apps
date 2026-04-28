@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}Patients - Parkinson Screening App{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- HEADER -->
+    <div style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem;">
+            <i class="fas fa-users" style="color: var(--primary); margin-right: 0.8rem;"></i>
+            Patients enregistrés
+        </h1>
+        <p style="color: var(--gray-dark); font-size: 0.95rem;">
+            Gestion complète de vos patients
+        </p>
+    </div>
+
+    <!-- SEARCH BAR PREMIUM -->
+    <div class="card fade-in-up" style="animation-delay: 0.1s; margin-bottom: 2rem; background: linear-gradient(135deg, #f8fafb, #f0f2f5);">
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <div style="flex: 1; position: relative;">
+                <i class="fas fa-search" style="
+                    position: absolute;
+                    left: 1rem;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: var(--primary);
+                    font-size: 1.1rem;
+                "></i>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Rechercher un patient par nom, ID ou localisation..." 
+                    style="
+                        width: 100%;
+                        padding: 1rem 1rem 1rem 3rem;
+                        border: 2px solid var(--gray);
+                        border-radius: var(--radius-sm);
+                        font-size: 1rem;
+                        transition: var(--transition);
+                        background: white;
+                    "
+                    onkeyup="filterPatients()"
+                >
+            </div>
+            <a href="/nouveau-patient" class="btn btn-primary" style="padding: 1rem 1.5rem; text-decoration: none;">
+                <i class="fas fa-plus"></i>
+                Nouveau patient
+            </a>
+        </div>
+    </div>
+
+    <!-- TABLE: Liste détaillée des patients -->
+    <div class="card fade-in-up">
+        <div style="margin-bottom: 1.5rem;">
+            <h3 style="color: var(--dark); font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.6rem;">
+                <i class="fas fa-list" style="color: var(--primary);"></i>
+                <span id="patient-count">Chargement...</span> patients
+            </h3>
+        </div>
+
+        <div class="table-responsive" style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;" id="patients-table">
+                <thead style="background: linear-gradient(135deg, #f8fafb, #f0f2f5);">
+                    <tr>
+                        <th style="padding: 1rem; text-align: left; font-weight: 700; border-bottom: 2px solid var(--gray);">ID / Nom</th>
+                        <th style="padding: 1rem; text-align: center; font-weight: 700; border-bottom: 2px solid var(--gray);">Âge</th>
+                        <th style="padding: 1rem; text-align: center; font-weight: 700; border-bottom: 2px solid var(--gray);">Localisation</th>
+                        <th style="padding: 1rem; text-align: center; font-weight: 700; border-bottom: 2px solid var(--gray);">Score</th>
+                        <th style="padding: 1rem; text-align: center; font-weight: 700; border-bottom: 2px solid var(--gray);">Diagnostic</th>
+                        <th style="padding: 1rem; text-align: center; font-weight: 700; border-bottom: 2px solid var(--gray);">Statut</th>
+                        <th style="padding: 1rem; text-align: center; font-weight: 700; border-bottom: 2px solid var(--gray);">Finalisé</th>
+                        <th style="padding: 1rem; text-align: center; font-weight: 700; border-bottom: 2px solid var(--gray);">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="patients-tbody">
+                    <tr style="border-bottom: 1px solid var(--gray);">
+                        <td colspan="7" style="padding: 2rem; text-align: center; color: var(--gray-dark);">
+                            <i class="fas fa-spinner fa-spin"></i> Chargement des patients...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+let allPatients = [];
+
+// Charger les patients avec données réelles
+function loadPatients() {
+    fetch('/api/patients-detailed')
+        .then(response => response.json())
+        .then(patients => {
+            allPatients = patients;
+            displayPatients(patients);
+            document.getElementById('patient-count').textContent = patients.length;
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            document.getElementById('patients-tbody').innerHTML = '<tr><td colspan="7" style="padding: 2rem; text-align: center; color: var(--danger);">Erreur chargement patients</td></tr>';
+        });
+}
+
+function displayPatients(patients) {
+    const tbody = document.getElementById('patients-tbody');
+    
+    if (patients.length === 0) {
+        tbody.innerHTML = `
+            <tr style="border-bottom: 1px solid var(--gray);">
+                <td colspan="7" style="padding: 2rem; text-align: center;">
+                    <div style="color: var(--gray-dark);">
+                        <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                        <strong>Aucun patient enregistré</strong><br>
+                        <a href="/nouveau-patient" style="color: var(--primary); text-decoration: none; margin-top: 0.5rem; display: inline-block;">
+                            Créer le premier patient →
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    let html = '';
+    patients.forEach((patient, index) => {
+        const bgColor = index % 2 === 0 ? '' : 'background: var(--light);';
+        
+        // Couleur diagnostic
+        let diagnosticColor = '#999';
+        let diagnosticBg = '#f0f0f0';
+        let diagnosticIcon = '⚪';
+        
+        if (patient.diagnostic === 'suspect') {
+            diagnosticColor = '#ef5350';
+            diagnosticBg = 'rgba(239, 83, 80, 0.1)';
+            diagnosticIcon = '🔴';
+        } else if (patient.diagnostic === 'moyen_risque') {
+            diagnosticColor = '#ffa726';
+            diagnosticBg = 'rgba(255, 167, 38, 0.1)';
+            diagnosticIcon = '🟠';
+        } else if (patient.diagnostic === 'faible_risque') {
+            diagnosticColor = '#66bb6a';
+            diagnosticBg = 'rgba(102, 187, 106, 0.1)';
+            diagnosticIcon = '🟢';
+        }
+        
+        // Couleur statut
+        let statutColor = patient.statut === 'Complété' ? '#66bb6a' : '#ffa726';
+        let statutIcon = patient.statut === 'Complété' ? 'fa-check-circle' : 'fa-hourglass-half';
+        
+        // Statut finalisé
+        let finalisedColor = patient.finalisé ? '#66bb6a' : '#999';
+        let finalisedIcon = patient.finalisé ? 'fa-lock' : 'fa-lock-open';
+        let finalisedText = patient.finalisé ? '✅ Finalisé' : '⏳ En cours';
+        
+        html += `
+            <tr style="border-bottom: 1px solid var(--gray); transition: var(--transition); ${bgColor} hover-row" onclick="window.location.href='/patient/${patient.id}'" style="cursor: pointer;">
+                <td style="padding: 1rem;">
+                    <strong style="color: var(--dark); display: block;">${patient.nom}</strong>
+                    <small style="color: var(--gray-dark);">${patient.numero_id} • ${patient.date_creation}</small>
+                </td>
+                <td style="padding: 1rem; text-align: center;">
+                    <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600; color: var(--dark);">${patient.age} ans</span>
+                </td>
+                <td style="padding: 1rem; text-align: center;">
+                    <span style="color: var(--primary); font-weight: 600;">
+                        <i class="fas fa-map-marker-alt"></i> ${patient.localisation || 'N/A'}
+                    </span>
+                </td>
+                <td style="padding: 1rem; text-align: center;">
+                    <strong style="font-size: 1.1rem; color: var(--dark);">${patient.score}/6</strong>
+                </td>
+                <td style="padding: 1rem; text-align: center;">
+                    <span style="
+                        background: ${diagnosticBg};
+                        color: ${diagnosticColor};
+                        padding: 0.4rem 0.8rem;
+                        border-radius: 20px;
+                        font-weight: 600;
+                        font-size: 0.85rem;
+                    ">
+                        ${diagnosticIcon} ${
+                            patient.diagnostic === 'suspect' ? 'Suspect' : 
+                            patient.diagnostic === 'moyen_risque' ? 'Moyen risque' : 
+                            patient.diagnostic === 'faible_risque' ? 'Faible risque' : 
+                            'En attente'
+                        }
+                    </span>
+                </td>
+                <td style="padding: 1rem; text-align: center;">
+                    <span style="color: ${statutColor}; font-weight: 600;">
+                        <i class="fas ${statutIcon}"></i> ${patient.statut}
+                    </span>
+                </td>
+                <td style="padding: 1rem; text-align: center;">
+                    <span style="
+                        color: ${finalisedColor};
+                        font-weight: 600;
+                        padding: 0.4rem 0.8rem;
+                        background: rgba(102, 187, 106, 0.1);
+                        border-radius: 20px;
+                        display: inline-block;
+                    ">
+                        <i class="fas ${finalisedIcon}"></i> ${finalisedText}
+                    </span>
+                </td>
+                <td style="padding: 1rem; text-align: center;">
+                    <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                        <a href="/patient/${patient.id}" class="btn btn-primary" style="
+                            padding: 0.4rem 0.8rem;
+                            font-size: 0.8rem;
+                            text-decoration: none;
+                            display: inline-block;
+                            border-radius: 4px;
+                            background: var(--primary);
+                            color: white;
+                            border: none;
+                            cursor: pointer;
+                        " onclick="event.stopPropagation();">
+                            <i class="fas fa-eye"></i> Consulter
+                        </a>
+                        <button onclick="toggleFinalizePatient(${patient.id}, ${patient.finalisé}, event)" class="btn" style="
+                            padding: 0.4rem 0.8rem;
+                            font-size: 0.8rem;
+                            background: ${patient.finalisé ? '#ef5350' : '#66bb6a'};
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            transition: var(--transition);
+                            white-space: nowrap;
+                        " onclick="event.stopPropagation();">
+                            <i class="fas ${patient.finalisé ? 'fa-undo' : 'fa-check'}"></i>
+                            ${patient.finalisé ? 'Réactiver' : 'Finaliser'}
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+    
+    tbody.innerHTML = html;
+}
+
+function filterPatients() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = allPatients.filter(patient => 
+        patient.nom.toLowerCase().includes(searchTerm) ||
+        patient.numero_id.toLowerCase().includes(searchTerm) ||
+        patient.localisation.toLowerCase().includes(searchTerm)
+    );
+    displayPatients(filtered);
+}
+
+function toggleFinalizePatient(patientId, isFinalised, event) {
+    event.stopPropagation();
+    
+    const url = isFinalised 
+        ? `/api/unfinalizer-patient/${patientId}` 
+        : `/api/finalize-patient/${patientId}`;
+    
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Afficher message de succès
+            alert(data.message);
+            // Recharger les données
+            loadPatients();
+        } else {
+            alert('Erreur: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Erreur lors de l\'opération');
+    });
+}
+
+// Charger au démarrage
+loadPatients();
+
+// Ajouter style pour hover
+const style = document.createElement('style');
+style.textContent = `
+    tr.hover-row:hover {
+        background-color: rgba(102, 187, 106, 0.05) !important;
+        cursor: pointer;
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

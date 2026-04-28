@@ -1,0 +1,229 @@
+🔧 TROUBLESHOOTING - GUIDE COMPLET
+==================================
+
+Si vous avez une erreur, trouvez-la ici! ✅
+
+═══════════════════════════════════════════════════════
+
+❌ ERREUR 1: "TemplateNotFound: 404.html"
+──────────────────────────────────────────
+
+Cause: Le fichier templates/404.html n'existe pas
+
+Solution:
+1. Assurez-vous que 404.html est dans templates/
+2. Les fichiers doivent être dans:
+   parkinson-app/templates/404.html
+   parkinson-app/templates/500.html
+
+Vérifiez que vous avez extrait le ZIP complètement.
+
+═══════════════════════════════════════════════════════
+
+❌ ERREUR 2: "UndefinedTable: relation 'user' does not exist"
+─────────────────────────────────────────────────────
+
+Cause: Les tables n'ont pas été créées dans Neon
+
+Solution TRÈS IMPORTANTE:
+1. Stoppez l'application (Ctrl+C)
+2. Exécutez:
+   $ python setup.py
+3. Attendez que vous voyez:
+   ✅ Tables créées avec succès!
+4. Puis relancez:
+   $ python app.py
+
+Ceci DOIT être fait UNE FOIS au démarrage!
+
+═══════════════════════════════════════════════════════
+
+❌ ERREUR 3: "ModuleNotFoundError: No module named 'psycopg2'"
+─────────────────────────────────────────────────────
+
+Cause: Les dépendances ne sont pas installées
+
+Solution:
+$ pip install -r requirements.txt
+
+Attendez que tout s'installe.
+
+═══════════════════════════════════════════════════════
+
+❌ ERREUR 4: "could not connect to server"
+────────────────────────────────
+
+Cause: Problème de connexion à Neon
+
+Solutions:
+1. Vérifiez votre connexion internet
+2. Vérifiez que le fichier .env existe
+3. Vérifiez que DATABASE_URL est correct
+4. Testez:
+   $ python test_connection.py
+
+Si test_connection.py marche mais l'app ne marche pas:
+   → Les tables n'ont pas été créées
+   → Exécutez: python setup.py
+
+═══════════════════════════════════════════════════════
+
+❌ ERREUR 5: "FileNotFoundError: .env"
+──────────────────────────
+
+Cause: Le fichier .env n'existe pas
+
+Solution:
+1. Créez un fichier nommé ".env"
+2. Collez le contenu:
+
+DATABASE_URL=postgresql+psycopg2://neondb_owner:npg_v5a4NDSjykoT@ep-dry-boat-an5t8pui-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require
+SECRET_KEY=your-secret-key-change-in-production-2024
+FLASK_ENV=development
+DEBUG=True
+
+3. Sauvegardez dans le dossier du projet
+
+═══════════════════════════════════════════════════════
+
+❌ ERREUR 6: "address already in use"
+──────────────────────────
+
+Cause: Le port 5000 est déjà utilisé
+
+Solutions:
+1. Vérifiez qu'une autre instance n'est pas lancée
+2. Tuez le processus:
+   - Windows: taskkill /PID [PID] /F
+   - Mac/Linux: kill -9 [PID]
+3. Ou changez le port dans app.py:
+   app.run(debug=True, port=5001)
+
+═══════════════════════════════════════════════════════
+
+❌ ERREUR 7: "Login ne fonctionne pas"
+──────────────────────────
+
+Cause: Probablement les tables ne sont pas créées
+
+Solution:
+1. Stoppez l'app
+2. Exécutez: python setup.py
+3. Relancez: python app.py
+4. Créez un compte (Sign Up)
+5. Connectez-vous (Login)
+
+═══════════════════════════════════════════════════════
+
+❌ ERREUR 8: "CSS ne charge pas"
+────────────────────
+
+Cause: Les fichiers static ne sont pas trouvés
+
+Solution:
+1. Vérifiez la structure:
+   parkinson-app/
+   ├─ static/
+   │  ├─ style.css
+   │  └─ script.js
+   └─ ...
+
+2. Redémarrez l'app
+
+═══════════════════════════════════════════════════════
+
+❌ ERREUR 9: "Neon connection refused"
+───────────────────────────
+
+Cause: Les credentials Neon sont incorrects
+
+Solution:
+1. Vérifiez votre connection string
+2. Allez sur https://console.neon.tech
+3. Cliquez sur votre projet
+4. Cliquez "Connection"
+5. Copiez la string exactement
+6. Collez dans .env:
+   DATABASE_URL=postgresql+psycopg2://...
+
+═══════════════════════════════════════════════════════
+
+❌ ERREUR 10: "Database password authentication failed"
+──────────────────────────────────
+
+Cause: Le mot de passe dans la connection string est mauvais
+
+Solution:
+1. Allez sur Neon Console
+2. Cliquez votre projet
+3. Cliquez "Connection"
+4. Copiez la nouvelle connection string
+5. Mettez à jour .env
+
+═══════════════════════════════════════════════════════
+
+✅ PROCÉDURE COMPLÈTE DE DÉMARRAGE:
+────────────────────────────────────
+
+1. Extraire le ZIP
+2. Ouvrir terminal dans le dossier
+3. pip install -r requirements.txt
+4. python test_connection.py  (doit marcher!)
+5. python setup.py            (crée les tables!)
+6. python app.py              (lance l'app!)
+7. http://localhost:5000      (accès!)
+
+Si vous voyez "UndefinedTable" c'est que vous avez sauté l'étape 5!
+
+═══════════════════════════════════════════════════════
+
+🧪 COMMANDES DE TEST:
+
+Tester connexion:
+$ python test_connection.py
+
+Tester import:
+$ python -c "from app import app, db; print('OK')"
+
+Tester Flask:
+$ python -c "from flask import Flask; print('OK')"
+
+Tester psycopg2:
+$ python -c "import psycopg2; print('OK')"
+
+═══════════════════════════════════════════════════════
+
+💡 CHECKLIST AVANT DE LANCER:
+
+✓ .env existe et contient DATABASE_URL
+✓ requirements.txt installé (pip install -r ...)
+✓ setup.py exécuté (python setup.py)
+✓ test_connection.py marche
+✓ Tous les fichiers templates/ sont présents
+✓ Tous les fichiers static/ sont présents
+✓ .gitignore existe
+✓ Connexion internet OK
+
+═══════════════════════════════════════════════════════
+
+🆘 BESOIN D'AIDE?
+
+1. Lisez cette liste complètement
+2. Cherchez votre erreur
+3. Suivez la solution
+4. Si ça ne marche pas:
+   - Redémarrez (Ctrl+C puis python app.py)
+   - Réinstallez (pip install -r requirements.txt)
+   - Réinitialisez (python setup.py)
+
+═══════════════════════════════════════════════════════
+
+✨ 99% des problèmes = "Les tables n'ont pas été créées"
+
+SOLUTION: python setup.py
+
+═══════════════════════════════════════════════════════
+
+Version: 1.0 Troubleshooting
+Date: 2024
+Status: ✅ GUIDE COMPLET

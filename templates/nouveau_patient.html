@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Nouveau Patient - Parkinson Screening App{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="form-container">
+        <div class="form-header">
+            <h2>
+                <i class="fas fa-user-plus" style="margin-right: 0.8rem;"></i>
+                Créer un nouveau patient
+            </h2>
+            <p>Remplissez les informations personnelles du patient</p>
+        </div>
+
+        <div class="form-body">
+            <form id="patientForm" class="patient-form">
+                <!-- SECTION IDENTITÉ -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-id-card"></i>
+                        Identité du patient
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label for="nom">
+                            <i class="fas fa-user" style="color: var(--primary);"></i>
+                            Nom complet
+                            <span style="color: var(--danger);">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="nom" 
+                            name="nom" 
+                            required 
+                            placeholder="Ex: Jean Dupont"
+                            style="border-radius: var(--radius-sm);"
+                        >
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age">
+                                <i class="fas fa-birthday-cake" style="color: var(--primary);"></i>
+                                Âge
+                                <span style="color: var(--danger);">*</span>
+                            </label>
+                            <input 
+                                type="number" 
+                                id="age" 
+                                name="age" 
+                                required 
+                                min="18" 
+                                max="120"
+                                placeholder="60"
+                                style="border-radius: var(--radius-sm);"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="sexe">
+                                <i class="fas fa-venus-mars" style="color: var(--primary);"></i>
+                                Sexe
+                                <span style="color: var(--danger);">*</span>
+                            </label>
+                            <select id="sexe" name="sexe" required style="border-radius: var(--radius-sm);">
+                                <option value="">-- Sélectionner --</option>
+                                <option value="Homme">Homme</option>
+                                <option value="Femme">Femme</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION ÉDUCATION -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-graduation-cap"></i>
+                        Contexte éducatif
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label for="niveau_education">
+                            <i class="fas fa-book" style="color: var(--primary);"></i>
+                            Niveau d'éducation
+                        </label>
+                        <select id="niveau_education" name="niveau_education" style="border-radius: var(--radius-sm);">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="Primaire">Primaire</option>
+                            <option value="Secondaire">Secondaire</option>
+                            <option value="Baccalauréat">Baccalauréat</option>
+                            <option value="Licence">Licence</option>
+                            <option value="Master">Master/Diplôme</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="autisme">
+                            <i class="fas fa-puzzle-piece" style="color: var(--primary);"></i>
+                            Troubles du spectre autistique
+                        </label>
+                        <select id="autisme" name="autisme" style="border-radius: var(--radius-sm);">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="Non">Non</option>
+                            <option value="Oui">Oui</option>
+                            <option value="Suspecté">Suspecté</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- SECTION SOCIALE -->
+                <div class="form-section">
+                    <h3>
+                        <i class="fas fa-heart"></i>
+                        Situation sociale
+                    </h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="marital">
+                                <i class="fas fa-ring" style="color: var(--primary);"></i>
+                                Statut marital
+                            </label>
+                            <select id="marital" name="marital" style="border-radius: var(--radius-sm);">
+                                <option value="">-- Sélectionner --</option>
+                                <option value="Célibataire">Célibataire</option>
+                                <option value="Marié">Marié(e)</option>
+                                <option value="Veuf">Veuf(ve)</option>
+                                <option value="Divorcé">Divorcé(e)</option>
+                                <option value="Pacsé">Pacsé(e)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="emploi">
+                                <i class="fas fa-briefcase" style="color: var(--primary);"></i>
+                                Situation professionnelle
+                            </label>
+                            <select id="emploi" name="emploi" style="border-radius: var(--radius-sm);">
+                                <option value="">-- Sélectionner --</option>
+                                <option value="Actif">Actif(ve)</option>
+                                <option value="Retraité">Retraité(e)</option>
+                                <option value="Sans emploi">Sans emploi</option>
+                                <option value="Étudiant">Étudiant(e)</option>
+                                <option value="Congé">En congé</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="localisation">
+                            <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i>
+                            Localisation / Région
+                        </label>
+                        <select id="localisation" name="localisation" style="border-radius: var(--radius-sm);">
+                            <option value="">-- Sélectionner --</option>
+                            <option value="Dakar">Dakar</option>
+                            <option value="Thiès">Thiès</option>
+                            <option value="Kaolack">Kaolack</option>
+                            <option value="Saint-Louis">Saint-Louis</option>
+                            <option value="Tambacunda">Tambacunda</option>
+                            <option value="Ziguinchor">Ziguinchor</option>
+                            <option value="Kolda">Kolda</option>
+                            <option value="Autre">Autre localité</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="history.back()">
+                        <i class="fas fa-arrow-left"></i>
+                        Retour
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-arrow-right"></i>
+                        Commencer les questionnaires
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('patientForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        nom: document.getElementById('nom').value,
+        age: document.getElementById('age').value,
+        sexe: document.getElementById('sexe').value,
+        niveau_education: document.getElementById('niveau_education').value,
+        autisme: document.getElementById('autisme').value,
+        marital: document.getElementById('marital').value,
+        emploi: document.getElementById('emploi').value,
+        localisation: document.getElementById('localisation').value
+    };
+
+    try {
+        const response = await fetch('/nouveau-patient', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            window.location.href = `/questionnaire/${data.patient_id}/1`;
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue');
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+
+{% block title %}Fiche Patient - {{ patient.nom }}{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- HEADER PATIENT -->
+    <div class="card fade-in-up" style="animation-delay: 0.1s; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div style="display: flex; align-items: flex-start; gap: 2rem;">
+                <div style="
+                    width: 100px;
+                    height: 100px;
+                    background: rgba(255, 255, 255, 0.2);
+                    border-radius: var(--radius);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 3rem;
+                    backdrop-filter: blur(10px);
+                ">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div>
+                    <h1 style="font-size: 2rem; margin: 0 0 0.5rem; font-weight: 700;">{{ patient.nom }}</h1>
+                    <p style="margin: 0; opacity: 0.9; font-size: 1rem;">
+                        ID: <strong>{{ patient.numero_id }}</strong>
+                    </p>
+                    {% if resultat %}
+                    <div style="margin-top: 1rem;">
+                        {% if resultat.diagnostic == 'suspect' %}
+                        <span style="
+                            display: inline-block;
+                            background: rgba(239, 83, 80, 0.3);
+                            color: white;
+                            padding: 0.5rem 1rem;
+                            border-radius: var(--radius-sm);
+                            font-size: 0.9rem;
+                            font-weight: 600;
+                        ">
+                            <i class="fas fa-exclamation-triangle"></i> CAS SUSPECT
+                        </span>
+                        {% elif resultat.diagnostic == 'moyen_risque' %}
+                        <span style="
+                            display: inline-block;
+                            background: rgba(255, 167, 38, 0.3);
+                            color: white;
+                            padding: 0.5rem 1rem;
+                            border-radius: var(--radius-sm);
+                            font-size: 0.9rem;
+                            font-weight: 600;
+                        ">
+                            <i class="fas fa-info-circle"></i> RISQUE MOYEN
+                        </span>
+                        {% else %}
+                        <span style="
+                            display: inline-block;
+                            background: rgba(102, 187, 106, 0.3);
+                            color: white;
+                            padding: 0.5rem 1rem;
+                            border-radius: var(--radius-sm);
+                            font-size: 0.9rem;
+                            font-weight: 600;
+                        ">
+                            <i class="fas fa-check-circle"></i> FAIBLE RISQUE
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <button class="btn btn-login" onclick="history.back()" style="background: rgba(255, 255, 255, 0.2); color: white; margin-bottom: 0.8rem;">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABS NAVIGATION -->
+    <div class="card fade-in-up" style="animation-delay: 0.2s; padding: 1rem 2rem; background: white; margin-bottom: 2rem; border-bottom: 2px solid var(--gray);">
+        <div style="display: flex; gap: 2rem; border-bottom: 2px solid var(--gray); margin: 0 -2rem; padding: 0 2rem;">
+            <button class="tab-btn" onclick="showTab('infos')" style="
+                padding: 1rem 0;
+                border: none;
+                background: none;
+                cursor: pointer;
+                color: var(--gray-dark);
+                font-weight: 600;
+                border-bottom: 3px solid transparent;
+                transition: var(--transition);
+            " id="tab-infos">
+                <i class="fas fa-id-card"></i> Informations
+            </button>
+            <button class="tab-btn" onclick="showTab('dossier')" style="
+                padding: 1rem 0;
+                border: none;
+                background: none;
+                cursor: pointer;
+                color: var(--gray-dark);
+                font-weight: 600;
+                border-bottom: 3px solid transparent;
+                transition: var(--transition);
+            " id="tab-dossier">
+                <i class="fas fa-folder"></i> Dossier médical
+            </button>
+            <button class="tab-btn" onclick="showTab('historique')" style="
+                padding: 1rem 0;
+                border: none;
+                background: none;
+                cursor: pointer;
+                color: var(--gray-dark);
+                font-weight: 600;
+                border-bottom: 3px solid transparent;
+                transition: var(--transition);
+            " id="tab-historique">
+                <i class="fas fa-history"></i> Historique
+            </button>
+        </div>
+    </div>
+
+    <!-- TAB 1: INFORMATIONS -->
+    <div id="content-infos" class="tab-content" style="display: block;">
+        <div class="card fade-in-up" style="animation-delay: 0.3s;">
+            <h2 style="color: var(--dark); font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.8rem;">
+                <i class="fas fa-user-check" style="color: var(--primary); font-size: 1.4rem;"></i>
+                Données démographiques
+            </h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+                <div style="padding: 1.5rem; background: var(--light); border-radius: var(--radius-sm); border-left: 4px solid var(--primary);">
+                    <p style="color: var(--gray-dark); font-size: 0.9rem; margin: 0 0 0.5rem;">Âge</p>
+                    <p style="color: var(--dark); font-size: 1.4rem; font-weight: 700; margin: 0;">{{ patient.age }} ans</p>
+                </div>
+                <div style="padding: 1.5rem; background: var(--light); border-radius: var(--radius-sm); border-left: 4px solid var(--primary);">
+                    <p style="color: var(--gray-dark); font-size: 0.9rem; margin: 0 0 0.5rem;">Sexe</p>
+                    <p style="color: var(--dark); font-size: 1.4rem; font-weight: 700; margin: 0;">{{ patient.sexe }}</p>
+                </div>
+                <div style="padding: 1.5rem; background: var(--light); border-radius: var(--radius-sm); border-left: 4px solid var(--primary);">
+                    <p style="color: var(--gray-dark); font-size: 0.9rem; margin: 0 0 0.5rem;">Date d'enregistrement</p>
+                    <p style="color: var(--dark); font-size: 1.4rem; font-weight: 700; margin: 0;">{{ patient.date_creation.strftime('%d/%m/%Y') }}</p>
+                </div>
+                <div style="padding: 1.5rem; background: var(--light); border-radius: var(--radius-sm); border-left: 4px solid var(--primary);">
+                    <p style="color: var(--gray-dark); font-size: 0.9rem; margin: 0 0 0.5rem;">Niveau d'éducation</p>
+                    <p style="color: var(--dark); font-size: 1.4rem; font-weight: 700; margin: 0;">{{ patient.niveau_education or '-' }}</p>
+                </div>
+                <div style="padding: 1.5rem; background: var(--light); border-radius: var(--radius-sm); border-left: 4px solid var(--primary);">
+                    <p style="color: var(--gray-dark); font-size: 0.9rem; margin: 0 0 0.5rem;">Statut marital</p>
+                    <p style="color: var(--dark); font-size: 1.4rem; font-weight: 700; margin: 0;">{{ patient.marital or '-' }}</p>
+                </div>
+                <div style="padding: 1.5rem; background: var(--light); border-radius: var(--radius-sm); border-left: 4px solid var(--primary);">
+                    <p style="color: var(--gray-dark); font-size: 0.9rem; margin: 0 0 0.5rem;">Localisation</p>
+                    <p style="color: var(--dark); font-size: 1.4rem; font-weight: 700; margin: 0;">{{ patient.localisation or '-' }}</p>
+                </div>
+            </div>
+
+            {% if resultat %}
+            <h2 style="color: var(--dark); font-weight: 700; margin-bottom: 2rem; margin-top: 3rem; display: flex; align-items: center; gap: 0.8rem; padding-top: 2rem; border-top: 2px solid var(--gray);">
+                <i class="fas fa-stethoscope" style="color: var(--primary); font-size: 1.4rem;"></i>
+                Résultat du dépistage
+            </h2>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div style="padding: 2rem; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: var(--radius); border-left: 4px solid var(--success);">
+                    <p style="color: var(--gray-dark); font-size: 0.9rem; margin: 0 0 0.8rem;">Score total</p>
+                    <p style="color: var(--success); font-size: 3rem; font-weight: 700; margin: 0;">{{ resultat.score_total }}/6</p>
+                </div>
+
+                {% if resultat.diagnostic == 'suspect' %}
+                <div style="padding: 2rem; background: linear-gradient(135deg, #ffebee, #ffcdd2); border-radius: var(--radius); border-left: 4px solid var(--danger);">
+                    <p style="color: var(--danger); font-size: 0.9rem; margin: 0 0 0.8rem; font-weight: 600;">Diagnostic</p>
+                    <p style="color: var(--danger); font-size: 1.8rem; font-weight: 700; margin: 0;">CAS SUSPECT</p>
+                    <p style="color: var(--danger); font-size: 0.85rem; margin: 0.8rem 0 0;">Référence requise</p>
+                </div>
+                {% elif resultat.diagnostic == 'moyen_risque' %}
+                <div style="padding: 2rem; background: linear-gradient(135deg, #fff3e0, #ffe0b2); border-radius: var(--radius); border-left: 4px solid var(--warning);">
+                    <p style="color: #f57f17; font-size: 0.9rem; margin: 0 0 0.8rem; font-weight: 600;">Diagnostic</p>
+                    <p style="color: #f57f17; font-size: 1.8rem; font-weight: 700; margin: 0;">RISQUE MOYEN</p>
+                    <p style="color: #f57f17; font-size: 0.85rem; margin: 0.8rem 0 0;">Suivi recommandé</p>
+                </div>
+                {% else %}
+                <div style="padding: 2rem; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: var(--radius); border-left: 4px solid var(--success);">
+                    <p style="color: var(--success); font-size: 0.9rem; margin: 0 0 0.8rem; font-weight: 600;">Diagnostic</p>
+                    <p style="color: var(--success); font-size: 1.8rem; font-weight: 700; margin: 0;">FAIBLE RISQUE</p>
+                    <p style="color: var(--success); font-size: 0.85rem; margin: 0.8rem 0 0;">Suivi régulier</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div style="padding: 2rem; background: var(--light); border-radius: var(--radius); margin-top: 2rem;">
+                <h4 style="color: var(--dark); margin: 0 0 1rem; font-weight: 700;">Recommandations</h4>
+                <p style="color: var(--gray-dark); margin: 0; line-height: 1.8;">
+                    {{ resultat.recommandation }}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- TAB 2: DOSSIER MEDICAL -->
+    <div id="content-dossier" class="tab-content" style="display: none;">
+        <div class="card fade-in-up" style="animation-delay: 0.3s;">
+            <h2 style="color: var(--dark); font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem;">
+                <i class="fas fa-folder-open" style="color: var(--primary); font-size: 1.4rem;"></i>
+                Dossier médical complet
+            </h2>
+
+            {% if questionnaires %}
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                {% for q in questionnaires %}
+                <div style="padding: 1.5rem; background: var(--light); border-radius: var(--radius-sm); border-left: 4px solid var(--primary);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h4 style="color: var(--dark); margin: 0; font-weight: 700;">
+                            <i class="fas fa-clipboard-list" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                            Questionnaire {{ q.numero_questionnaire }}/3
+                        </h4>
+                        <p style="color: var(--gray-dark); font-size: 0.9rem; margin: 0;">
+                            {{ q.date_completion.strftime('%d/%m/%Y') if q.date_completion else 'En attente' }}
+                        </p>
+                    </div>
+                    {% if q.responses %}
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.8rem;">
+                        {% for key, value in q.responses.items() %}
+                        <span style="
+                            background: {% if value == 'Oui' %}rgba(239, 83, 80, 0.15){% else %}rgba(102, 187, 106, 0.15){% endif %};
+                            color: {% if value == 'Oui' %}var(--danger){% else %}var(--success){% endif %};
+                            padding: 0.4rem 0.8rem;
+                            border-radius: 20px;
+                            font-size: 0.85rem;
+                            font-weight: 600;
+                        ">
+                            {{ key }}: <strong>{{ value }}</strong>
+                        </span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="text-align: center; color: var(--gray-dark); padding: 2rem;">
+                Aucun questionnaire complété pour ce patient
+            </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- TAB 3: HISTORIQUE -->
+    <div id="content-historique" class="tab-content" style="display: none;">
+        <div class="card fade-in-up" style="animation-delay: 0.3s;">
+            <h2 style="color: var(--dark); font-weight: 700; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.8rem;">
+                <i class="fas fa-timeline" style="color: var(--primary); font-size: 1.4rem;"></i>
+                Timeline des actions
+            </h2>
+
+            <div style="position: relative; padding-left: 2rem;">
+                <div style="position: absolute; left: 0; top: 0; width: 2px; height: 100%; background: var(--gray);"></div>
+                
+                <div style="margin-bottom: 2rem; position: relative;">
+                    <div style="
+                        position: absolute;
+                        left: -10px;
+                        top: 0;
+                        width: 20px;
+                        height: 20px;
+                        background: var(--primary);
+                        border: 3px solid white;
+                        border-radius: 50%;
+                        box-shadow: 0 0 0 2px var(--primary);
+                    "></div>
+                    <div>
+                        <h4 style="color: var(--dark); margin: 0 0 0.3rem; font-weight: 700;">Patient créé</h4>
+                        <p style="color: var(--gray-dark); margin: 0; font-size: 0.9rem;">
+                            {{ patient.date_creation.strftime('%d/%m/%Y à %H:%M') }}
+                        </p>
+                    </div>
+                </div>
+
+                {% if questionnaires %}
+                {% for q in questionnaires %}
+                <div style="margin-bottom: 2rem; position: relative;">
+                    <div style="
+                        position: absolute;
+                        left: -10px;
+                        top: 0;
+                        width: 20px;
+                        height: 20px;
+                        background: var(--primary);
+                        border: 3px solid white;
+                        border-radius: 50%;
+                        box-shadow: 0 0 0 2px var(--primary);
+                    "></div>
+                    <div>
+                        <h4 style="color: var(--dark); margin: 0 0 0.3rem; font-weight: 700;">Questionnaire {{ q.numero_questionnaire }}/3 complété</h4>
+                        <p style="color: var(--gray-dark); margin: 0; font-size: 0.9rem;">
+                            {{ q.date_completion.strftime('%d/%m/%Y à %H:%M') if q.date_completion else 'En attente' }}
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                {% if resultat %}
+                <div style="margin-bottom: 2rem; position: relative;">
+                    <div style="
+                        position: absolute;
+                        left: -10px;
+                        top: 0;
+                        width: 20px;
+                        height: 20px;
+                        background: var(--primary);
+                        border: 3px solid white;
+                        border-radius: 50%;
+                        box-shadow: 0 0 0 2px var(--primary);
+                    "></div>
+                    <div>
+                        <h4 style="color: var(--dark); margin: 0 0 0.3rem; font-weight: 700;">Résultat généré</h4>
+                        <p style="color: var(--gray-dark); margin: 0; font-size: 0.9rem;">
+                            {{ resultat.date_resultat.strftime('%d/%m/%Y à %H:%M') }}
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- ACTIONS BOTTOM -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+        <button class="btn btn-primary" style="justify-content: center; padding: 1rem;" onclick="location.href='/questionnaire/{{ patient.id }}/1'">
+            <i class="fas fa-pencil-alt"></i>
+            Nouveau questionnaire
+        </button>
+        <button class="btn btn-secondary" style="justify-content: center; padding: 1rem;" onclick="printDossier()">
+            <i class="fas fa-print"></i>
+            Imprimer le dossier
+        </button>
+        <button class="btn btn-secondary" style="justify-content: center; padding: 1rem;" onclick="downloadPDF()">
+            <i class="fas fa-download"></i>
+            Télécharger (PDF)
+        </button>
+    </div>
+</div>
+
+<script>
+function showTab(tabName) {
+    // Masquer tous les tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+    });
+
+    // Désactiver tous les boutons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.style.color = 'var(--gray-dark)';
+        btn.style.borderBottomColor = 'transparent';
+    });
+
+    // Afficher le tab sélectionné
+    document.getElementById('content-' + tabName).style.display = 'block';
+    document.getElementById('tab-' + tabName).style.color = 'var(--primary)';
+    document.getElementById('tab-' + tabName).style.borderBottomColor = 'var(--primary)';
+}
+
+function printDossier() {
+    window.print();
+}
+
+function downloadPDF() {
+    // Créer un élément pour générer le PDF
+    const html = document.documentElement.innerHTML;
+    const newWindow = window.open('', '', 'width=800,height=600');
+    newWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Dossier - {{ patient.nom }}</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                h1, h2 { color: #66bb6a; }
+                .info { margin-bottom: 20px; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+                th { background-color: #f5f5f5; }
+            </style>
+        </head>
+        <body>
+            <h1>Dossier Patient</h1>
+            <div class="info">
+                <p><strong>Nom:</strong> {{ patient.nom }}</p>
+                <p><strong>ID:</strong> {{ patient.numero_id }}</p>
+                <p><strong>Âge:</strong> {{ patient.age }} ans</p>
+                <p><strong>Sexe:</strong> {{ patient.sexe }}</p>
+                <p><strong>Date:</strong> {{ patient.date_creation.strftime('%d/%m/%Y') }}</p>
+            </div>
+            <hr>
+            <h2>Résultats</h2>
+            {% if resultat %}
+            <div class="info">
+                <p><strong>Score:</strong> {{ resultat.score_total }}/6</p>
+                <p><strong>Diagnostic:</strong> {{ resultat.diagnostic }}</p>
+                <p><strong>Recommandation:</strong> {{ resultat.recommandation }}</p>
+            </div>
+            {% endif %}
+        </body>
+        </html>
+    `);
+    newWindow.document.close();
+    setTimeout(() => {
+        newWindow.print();
+        newWindow.close();
+    }, 250);
+}
+</script>
+{% endblock %}

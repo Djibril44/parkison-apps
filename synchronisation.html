@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+
+{% block title %}Synchronisation - Parkinson App{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- HEADER -->
+    <div style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem;">
+            <i class="fas fa-cloud-upload-alt" style="color: var(--primary); margin-right: 0.8rem;"></i>
+            Synchronisation des données
+        </h1>
+        <p style="color: var(--gray-dark); font-size: 0.95rem;">
+            Synchronisez vos données avec le serveur central
+        </p>
+    </div>
+
+    <!-- SYNC STATUS CARD PREMIUM -->
+    <div class="card fade-in-up" style="animation-delay: 0.1s; margin-bottom: 2rem; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;">
+        <div style="padding: 2rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+            <div style="
+                width: 120px;
+                height: 120px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: var(--radius);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 3rem;
+                backdrop-filter: blur(10px);
+                flex-shrink: 0;
+            ">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            
+            <div style="flex: 1; min-width: 250px;">
+                <h2 style="margin: 0 0 0.5rem; font-size: 1.8rem; font-weight: 700;">
+                    <span id="sync-pending" style="color: #ffeb3b;">0</span> données en attente
+                </h2>
+                <p style="margin: 0.5rem 0; opacity: 0.9; font-size: 0.95rem;">
+                    Dernier synchronisation: <strong id="last-sync">En cours de chargement...</strong>
+                </p>
+                <p style="margin: 0; opacity: 0.85; font-size: 0.9rem;">
+                    <i class="fas fa-check-circle"></i> Connecté au serveur central
+                </p>
+            </div>
+
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="btn" onclick="performSync()" id="sync-btn" style="
+                    background: white;
+                    color: var(--primary);
+                    padding: 1rem 1.5rem;
+                    font-size: 0.95rem;
+                    font-weight: 600;
+                    border: none;
+                    cursor: pointer;
+                    border-radius: var(--radius-sm);
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                    transition: var(--transition);
+                ">
+                    <i class="fas fa-sync-alt"></i>
+                    Synchroniser maintenant
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATS CARDS -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Patients en attente -->
+        <div class="card fade-in-up" style="animation-delay: 0.2s;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="color: var(--gray-dark); margin: 0 0 0.5rem; font-size: 0.9rem;">Patients en attente</p>
+                    <h3 id="pending-patients" style="margin: 0; font-size: 1.8rem; color: var(--primary); font-weight: 700;">0</h3>
+                </div>
+                <div style="
+                    width: 60px;
+                    height: 60px;
+                    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                    color: white;
+                    border-radius: var(--radius);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.5rem;
+                ">
+                    <i class="fas fa-user-md"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Questionnaires en attente -->
+        <div class="card fade-in-up" style="animation-delay: 0.3s;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="color: var(--gray-dark); margin: 0 0 0.5rem; font-size: 0.9rem;">Questionnaires en attente</p>
+                    <h3 id="pending-questionnaires" style="margin: 0; font-size: 1.8rem; color: #ffa726; font-weight: 700;">0</h3>
+                </div>
+                <div style="
+                    width: 60px;
+                    height: 60px;
+                    background: linear-gradient(135deg, #ffa726, #f57c00);
+                    color: white;
+                    border-radius: var(--radius);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.5rem;
+                ">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Résultats en attente -->
+        <div class="card fade-in-up" style="animation-delay: 0.4s;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="color: var(--gray-dark); margin: 0 0 0.5rem; font-size: 0.9rem;">Résultats en attente</p>
+                    <h3 id="pending-resultats" style="margin: 0; font-size: 1.8rem; color: #29b6f6; font-weight: 700;">0</h3>
+                </div>
+                <div style="
+                    width: 60px;
+                    height: 60px;
+                    background: linear-gradient(135deg, #29b6f6, #0288d1);
+                    color: white;
+                    border-radius: var(--radius);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.5rem;
+                ">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORIQUE DE SYNCHRONISATION -->
+    <div class="card fade-in-up" style="animation-delay: 0.5s;">
+        <h3 style="color: var(--dark); font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem;">
+            <i class="fas fa-history" style="color: var(--primary);"></i>
+            Historique de synchronisation
+        </h3>
+
+        <div style="position: relative; padding: 1rem 0;">
+            <div id="sync-history" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div style="text-align: center; padding: 2rem; color: var(--gray-dark);">
+                    <i class="fas fa-spinner fa-spin"></i> Chargement de l'historique...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INFO SUPPLÉMENTAIRE -->
+    <div class="card fade-in-up" style="animation-delay: 0.6s; background: linear-gradient(135deg, #f8fafb, #f0f2f5);">
+        <h3 style="color: var(--dark); font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem;">
+            <i class="fas fa-info-circle" style="color: var(--primary);"></i>
+            Informations
+        </h3>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div>
+                <p style="color: var(--gray-dark); margin: 0 0 0.5rem; font-size: 0.9rem;">Statut de connexion</p>
+                <p style="margin: 0; color: var(--primary); font-weight: 600;">
+                    <i class="fas fa-check-circle"></i> Connecté
+                </p>
+            </div>
+            <div>
+                <p style="color: var(--gray-dark); margin: 0 0 0.5rem; font-size: 0.9rem;">Espace local utilisé</p>
+                <p style="margin: 0; color: var(--dark); font-weight: 600;">1.2 MB</p>
+            </div>
+            <div>
+                <p style="color: var(--gray-dark); margin: 0 0 0.5rem; font-size: 0.9rem;">Version de l'app</p>
+                <p style="margin: 0; color: var(--dark); font-weight: 600;">4.0 Production</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Charger les données de synchronisation
+function loadSyncData() {
+    fetch('/api/sync-stats')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('sync-pending').textContent = data.total_pending;
+            document.getElementById('pending-patients').textContent = data.pending_patients;
+            document.getElementById('pending-questionnaires').textContent = data.pending_questionnaires;
+            document.getElementById('pending-resultats').textContent = data.pending_resultats;
+            document.getElementById('last-sync').textContent = data.last_sync;
+        })
+        .catch(error => console.error('Erreur:', error));
+
+    // Charger l'historique
+    fetch('/api/sync-history')
+        .then(response => response.json())
+        .then(history => {
+            displayHistory(history);
+        })
+        .catch(error => console.error('Erreur historique:', error));
+}
+
+function displayHistory(history) {
+    const historyDiv = document.getElementById('sync-history');
+    
+    if (!history || history.length === 0) {
+        historyDiv.innerHTML = '<p style="text-align: center; color: var(--gray-dark);">Aucune synchronisation enregistrée</p>';
+        return;
+    }
+
+    let html = '';
+    history.forEach(item => {
+        const statusColor = item.status === 'success' ? '#66bb6a' : '#ef5350';
+        const statusIcon = item.status === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+        const typeLabel = item.type === 'sync' ? 'Synchronisation' : 'Sauvegarde';
+
+        html += `
+            <div style="
+                padding: 1rem;
+                border-left: 4px solid ${statusColor};
+                background: rgba(0, 0, 0, 0.02);
+                border-radius: var(--radius-sm);
+            ">
+                <div style="display: flex; justify-content: space-between; align-items: start; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <i class="fas ${statusIcon}" style="color: ${statusColor}; font-size: 1.1rem;"></i>
+                            <strong style="color: var(--dark);">${typeLabel}</strong>
+                            <span style="
+                                background: ${statusColor};
+                                color: white;
+                                padding: 0.2rem 0.6rem;
+                                border-radius: 20px;
+                                font-size: 0.75rem;
+                                font-weight: 600;
+                                margin-left: 0.5rem;
+                            ">
+                                ${item.status === 'success' ? 'Réussi' : 'Échoué'}
+                            </span>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-dark); font-size: 0.9rem;">
+                            ${item.message}
+                        </p>
+                        <div style="margin-top: 0.5rem; display: flex; gap: 1rem; font-size: 0.85rem; color: var(--gray-dark);">
+                            <span><i class="fas fa-calendar-alt"></i> ${item.timestamp}</span>
+                            <span><i class="fas fa-database"></i> ${item.records_synced} enregistrements</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    historyDiv.innerHTML = html;
+}
+
+function performSync() {
+    const btn = document.getElementById('sync-btn');
+    const originalHTML = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Synchronisation en cours...';
+
+    fetch('/api/sync-perform', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            btn.innerHTML = '<i class="fas fa-check"></i> Synchronisé!';
+            btn.style.background = 'rgba(255, 255, 255, 0.3)';
+            
+            // Recharger les données après 2 secondes
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+                btn.style.background = '';
+                loadSyncData();
+            }, 2000);
+        } else {
+            btn.innerHTML = '<i class="fas fa-exclamation"></i> Erreur';
+            btn.style.background = '#ef5350';
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+                btn.style.background = '';
+            }, 2000);
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+    });
+}
+
+// Charger au démarrage
+loadSyncData();
+
+// Rafraîchir toutes les 30 secondes
+setInterval(loadSyncData, 30000);
+</script>
+{% endblock %}

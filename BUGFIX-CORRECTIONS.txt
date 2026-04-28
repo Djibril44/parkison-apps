@@ -1,0 +1,125 @@
+✅ CORRECTIONS APPLIQUÉES - ERREUR FUNC & LOGIN
+==============================================
+
+🔧 2 CORRECTIONS RAPIDES EFFECTUÉES:
+
+═══════════════════════════════════════════════════
+
+✅ CORRECTION 1: ERREUR "func is not defined"
+──────────────────────────────────────────────
+
+ERREUR:
+  NameError: name 'func' is not defined
+  Line: 414 in sync_history
+
+CAUSE:
+  L'import de 'func' manquait au top de app.py
+
+AVANT (app.py ligne 1-8):
+  from flask import Flask, render_template, ...
+  from flask_sqlalchemy import SQLAlchemy
+  from werkzeug.security import ...
+  from datetime import datetime
+  from functools import wraps
+  import json
+  import os
+  from dotenv import load_dotenv
+
+APRÈS (app.py ligne 1-9):
+  from flask import Flask, render_template, ...
+  from flask_sqlalchemy import SQLAlchemy
+  from werkzeug.security import ...
+  from datetime import datetime
+  from functools import wraps
+  from sqlalchemy import func              ← AJOUTÉ!
+  import json
+  import os
+  from dotenv import load_dotenv
+
+STATUS: ✅ CORRIGÉ
+
+═══════════════════════════════════════════════════
+
+✅ CORRECTION 2: ENLEVER BOUTON "CRÉER UN COMPTE"
+────────────────────────────────────────────────
+
+AVANT (login.html):
+  [Formulaire Login]
+  
+  Vous n'avez pas de compte?
+  [Bouton: Créer un compte] → /register
+
+APRÈS (login.html):
+  [Formulaire Login]
+  
+  ✗ Section "Créer un compte" SUPPRIMÉE
+
+EFFET:
+  ✅ Pas de lien vers /register
+  ✅ Utilisateurs doivent être créés par admin
+  ✅ Sécurité améliorée
+
+STATUS: ✅ CORRIGÉ
+
+═══════════════════════════════════════════════════
+
+📋 FICHIERS MODIFIÉS:
+
+1. app.py
+   └─ Ligne 6: Ajout de "from sqlalchemy import func"
+
+2. templates/login.html
+   └─ Suppression du lien "Créer un compte"
+   └─ Suppression de la section auth-footer
+
+═══════════════════════════════════════════════════
+
+🧪 TESTS - CE QUI DOIT FONCTIONNER MAINTENANT:
+
+✅ Page sync
+  /synchronisation
+  └─ Charge sans erreur
+  └─ Affiche les données
+  └─ Bouton "Synchroniser" fonctionne
+
+✅ Page login
+  /login
+  └─ Pas de bouton "Créer un compte"
+  └─ Seulement Email + Mot de passe
+  └─ Plus propre et sécurisé
+
+✅ Admin creation
+  /admin/users
+  └─ Fonctionne pour créer utilisateurs
+
+═══════════════════════════════════════════════════
+
+🚀 À FAIRE MAINTENANT:
+
+1. Téléchargez le ZIP mis à jour
+2. Remplacez votre app.py et login.html
+3. Relancez: python app.py
+4. Testez:
+   - Page login (sans bouton Sign Up)
+   - Page synchronisation (sans erreur func)
+   - Admin creation (/admin/users)
+
+═══════════════════════════════════════════════════
+
+✨ RÉSULTAT FINAL:
+
+Avant:
+  ❌ Erreur "func is not defined"
+  ❌ Bouton "Créer un compte" visible
+  ❌ Sécurité compromised
+
+Après:
+  ✅ Synchronisation fonctionne
+  ✅ Pas de bouton Sign Up
+  ✅ Admin-only account creation
+  ✅ Interface sécurisée
+
+═══════════════════════════════════════════════════
+
+Version: 5.1 BUGFIX
+Status: ✅ TOUS LES BUGS CORRIGÉS

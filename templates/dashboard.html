@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+
+{% block title %}Tableau de Bord - Parkinson Screening App{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- HEADER -->
+    <div style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem;">
+            <i class="fas fa-chart-bar" style="color: var(--primary); margin-right: 0.8rem;"></i>
+            Tableau de bord
+        </h1>
+        <p style="color: var(--gray-dark); font-size: 0.95rem;">
+            Statistiques de dépistage - Synthèse globale
+        </p>
+    </div>
+
+    <!-- STAT CARDS PREMIUM -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+        <!-- Card 1: Dépistages -->
+        <div class="stat-card fade-in-up" style="animation-delay: 0.1s;">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #66bb6a, #81c784);">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="total-count">0</h3>
+                <p>Dépistages réalisés</p>
+                <span class="stat-change">+12% ce mois</span>
+            </div>
+        </div>
+
+        <!-- Card 2: Cas Suspects -->
+        <div class="stat-card fade-in-up" style="animation-delay: 0.2s;">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #ef5350, #f44336);">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="suspects-count">0</h3>
+                <p>Cas suspects</p>
+                <span class="stat-change">+8% ce mois</span>
+            </div>
+        </div>
+
+        <!-- Card 3: Faible Risque -->
+        <div class="stat-card fade-in-up" style="animation-delay: 0.3s;">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #29b6f6, #0288d1);">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="faible-count">0</h3>
+                <p>Faible risque</p>
+                <span class="stat-change">+10% ce mois</span>
+            </div>
+        </div>
+
+        <!-- Card 4: Référés -->
+        <div class="stat-card fade-in-up" style="animation-delay: 0.4s;">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #ab47bc, #9c27b0);">
+                <i class="fas fa-hospital"></i>
+            </div>
+            <div class="stat-content">
+                <h3 id="moyen-count">0</h3>
+                <p>Risque moyen</p>
+                <span class="stat-change">+15% ce mois</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS SECTION - TAILLES FIXES -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
+        <!-- CHART 1: Répartition par âge (Pie) -->
+        <div class="card fade-in-up" style="animation-delay: 0.1s; width: 100%; max-width: 500px; height: 400px; display: flex; flex-direction: column;">
+            <h3 style="color: var(--dark); font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0;">
+                <i class="fas fa-chart-pie" style="color: var(--primary);"></i>
+                Répartition par âge
+            </h3>
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <canvas id="ageChart" style="max-height: 200px;"></canvas>
+            </div>
+            <div style="display: flex; justify-content: space-around; margin-top: 1rem; flex-wrap: wrap; gap: 0.8rem; flex-shrink: 0;">
+                <div style="text-align: center;">
+                    <div style="font-size: 0.75rem; color: var(--gray-dark);">60-69 ans</div>
+                    <div style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">35%</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 0.75rem; color: var(--gray-dark);">70-79 ans</div>
+                    <div style="font-size: 1.1rem; font-weight: 700; color: #ffa726;">45%</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 0.75rem; color: var(--gray-dark);">80+ ans</div>
+                    <div style="font-size: 1.1rem; font-weight: 700; color: #ef5350;">20%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHART 2: Évolution (Line) -->
+        <div class="card fade-in-up" style="animation-delay: 0.2s; width: 100%; max-width: 500px; height: 400px; display: flex; flex-direction: column;">
+            <h3 style="color: var(--dark); font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0;">
+                <i class="fas fa-chart-line" style="color: var(--primary);"></i>
+                Évolution des dépistages
+            </h3>
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <canvas id="evolutionChart" style="max-height: 250px;"></canvas>
+            </div>
+        </div>
+
+        <!-- CHART 3: Répartition géographique (Map-like) -->
+        <div class="card fade-in-up" style="animation-delay: 0.3s; grid-column: 1 / -1; width: 100%; height: 350px; display: flex; flex-direction: column;">
+            <h3 style="color: var(--dark); font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0;">
+                <i class="fas fa-map" style="color: var(--primary);"></i>
+                Répartition géographique des cas
+            </h3>
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <canvas id="mapChart" style="max-height: 250px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLE: Détails par région -->
+    <div class="card fade-in-up" style="animation-delay: 0.4s;">
+        <h3 style="color: var(--dark); font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem;">
+            <i class="fas fa-table" style="color: var(--primary);"></i>
+            Données détaillées par région
+        </h3>
+        <div class="table-responsive">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="background: linear-gradient(135deg, #f8fafb, #f0f2f5);">
+                    <tr>
+                        <th style="padding: 1rem; text-align: left; font-weight: 700; border-bottom: 2px solid var(--gray);">
+                            <i class="fas fa-map-marker-alt" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                            Région
+                        </th>
+                        <th style="padding: 1rem; text-align: center; font-weight: 700; border-bottom: 2px solid var(--gray);">
+                            <i class="fas fa-users" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                            Dépistages
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="region-table-body">
+                    <tr style="border-bottom: 1px solid var(--gray);">
+                        <td colspan="2" style="padding: 1rem; text-align: center; color: var(--gray-dark);">
+                            Chargement des données...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+// Charger les données depuis l'API
+let dashboardData = {};
+
+fetch('/api/dashboard-stats')
+    .then(response => response.json())
+    .then(data => {
+        dashboardData = data;
+        
+        // Mettre à jour les stat cards
+        document.getElementById('total-count').textContent = data.total;
+        document.getElementById('suspects-count').textContent = data.suspects;
+        document.getElementById('faible-count').textContent = data.faible_risque;
+        document.getElementById('moyen-count').textContent = data.moyen_risque;
+        
+        initCharts();
+    })
+    .catch(error => console.error('Erreur chargement données:', error));
+
+function initCharts() {
+    // Age Chart (Doughnut)
+    const ageCtx = document.getElementById('ageChart');
+    if (ageCtx) {
+        new Chart(ageCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['60-69 ans', '70-79 ans', '80+ ans'],
+                datasets: [{
+                    data: [
+                        dashboardData.age_groups['60-69'] || 0,
+                        dashboardData.age_groups['70-79'] || 0,
+                        dashboardData.age_groups['80+'] || 0
+                    ],
+                    backgroundColor: ['#66bb6a', '#ffa726', '#ef5350'],
+                    borderColor: 'white',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    // Evolution Chart (Line)
+    const evolutionCtx = document.getElementById('evolutionChart');
+    if (evolutionCtx) {
+        new Chart(evolutionCtx, {
+            type: 'line',
+            data: {
+                labels: ['Sem. 1', 'Sem. 2', 'Sem. 3', 'Sem. 4'],
+                datasets: [{
+                    label: 'Dépistages',
+                    data: dashboardData.evolution || [120, 150, 200, 220],
+                    borderColor: '#66bb6a',
+                    backgroundColor: 'rgba(102, 187, 106, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#66bb6a',
+                    pointBorderColor: 'white',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Map Chart (Bar - simulating regions)
+    const mapCtx = document.getElementById('mapChart');
+    if (mapCtx) {
+        const regionNames = Object.keys(dashboardData.regions || {});
+        const regionCounts = Object.values(dashboardData.regions || {});
+        
+        new Chart(mapCtx, {
+            type: 'bar',
+            data: {
+                labels: regionNames.length > 0 ? regionNames : ['Aucune donnée'],
+                datasets: [{
+                    label: 'Dépistages',
+                    data: regionCounts.length > 0 ? regionCounts : [0],
+                    backgroundColor: '#66bb6a',
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: false,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+
+// Remplir le tableau des régions
+fetch('/api/dashboard-stats')
+    .then(response => response.json())
+    .then(data => {
+        const tbody = document.getElementById('region-table-body');
+        const regions = data.regions || {};
+        
+        if (Object.keys(regions).length === 0) {
+            tbody.innerHTML = '<tr style="border-bottom: 1px solid var(--gray);"><td colspan="2" style="padding: 1rem; text-align: center; color: var(--gray-dark);">Aucune donnée pour le moment</td></tr>';
+            return;
+        }
+        
+        let html = '';
+        let alternate = false;
+        
+        Object.entries(regions).forEach(([region, count]) => {
+            const bgStyle = alternate ? 'background: var(--light);' : '';
+            html += `
+                <tr style="border-bottom: 1px solid var(--gray); transition: var(--transition); ${bgStyle}">
+                    <td style="padding: 1rem;"><strong>${region || 'Non spécifiée'}</strong></td>
+                    <td style="padding: 1rem; text-align: center;">${count}</td>
+                </tr>
+            `;
+            alternate = !alternate;
+        });
+        
+        tbody.innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        document.getElementById('region-table-body').innerHTML = '<tr><td colspan="2" style="padding: 1rem; text-align: center; color: var(--danger);">Erreur chargement données</td></tr>';
+    });
+</script>
+{% endblock %}
